@@ -1,0 +1,226 @@
+#!/bin/sh
+# C My Lib configuration script
+
+[ -f version ] && . version
+if [ -n "$CML_VERSION" ]; then
+    VERSION=$CML_VERSION
+else
+    VERSION=0.1
+fi
+
+OSTYPE=Linux
+BUILDDIR=`pwd`
+CMLDIR=`dirname $0`
+
+echo $CMLDIR | grep '^\.' > /dev/null 
+if [ "x0" = "x$?" ]; then
+    CMLDIR="${BUILDDIR}/`echo ${CMLDIR} | colrm 1 2`"
+fi
+
+uname -a | grep "Linux" > /dev/null
+[ "x$?" = "x1" ] && OSTYPE="FreeBSD"
+
+CMD_VAR=$1
+
+OSLINUX="#"
+OSFREEBSD="#"
+DEFINE_LINUX_IN=OTHER
+if [ "x$OSTYPE" = "xLinux" ]; then
+    echo_cmd=echo
+    DEFINE_LINUX_IN="LINUX"
+    OSLINUX=
+else
+    echo_cmd=/bin/echo
+    OSFREEBSD=
+fi
+
+usage()
+{
+    echo "C My LIB configuration"
+    echo "Run this script from the build directory"
+    echo "Add INCLUDE and LIB dir into your Makefile"
+	echo "Usage: ./configure [OPTIONS]"
+	echo "   --builddir=<PATH>     - where to place libcml.a "
+    echo "                           Default: $BUILDDIR"
+	echo "   --debug=yes           - enable debug"
+	echo "   --test=yes            - enable test"
+	echo "   --disable-base64      - exclude base64 functions"
+	echo "   --disable-string      - exclude string functions"
+	echo "   --enable-list         - include list functions"
+	echo "   --enable-btree        - include btree functions"
+	echo "   --enable-btree16      - include btree16 functions"
+	echo "   --enable-btree32      - include btree32 functions"
+}
+
+DEBUG=
+BASE64=yes
+STRING=yes
+LIST=no
+MPOOL=no
+BTREE=no
+BTREE16=no
+BTREE32=no
+
+while [ "x$CMD_VAR" != "x" ]; 
+do
+	OPTARG=`expr "x$CMD_VAR" : 'x[^=]*=\(.*\)'`
+	OPTION=`expr "x$CMD_VAR" : 'x\(.*\)=.*'`
+    ENADIS=`expr "x$CMD_VAR" : 'x--\(.*\)-[a-z].*'`
+    BSET=
+
+    [ "x$ENADIS" == "xenable" ] && BSET=yes
+    [ "x$ENADIS" == "xdisable" ] && BSET=no
+
+    if [ -n "$BSET" ]; then
+       OPTION=`expr "x$CMD_VAR" : 'x.*le*-\(.*\)'`
+    fi
+
+	case "$OPTION" in
+		--builddir)
+		    BUILDDIR=$OPTARG
+		;;
+        debug)
+			DEBUG=$BSET
+        ;;
+		base64)
+		    BASE64=$BSET
+		;;
+		string)
+		    STRING=$BSET
+		;;
+		btree)
+		    BTREE=$BSET
+		;;
+		mpool)
+		    MPOOL=$BSET
+		;;
+		list)
+		    LIST=$BSET
+		;;
+		btree16)
+		    BTREE16=$BSET
+		;;
+		btree32)
+		    BTREE32=$BSET
+		;;
+		*)
+        echo "Unknown option: $OPTION"
+		usage
+		exit 1
+		;;
+	esac
+	shift
+	CMD_VAR=$1
+done
+
+if [ -z "$OUTPUTDIRSRC" ]; then
+	OUTPUTDIRSRC=$OUTPUTDIR/src
+fi
+echo "Lib source dir:    $BUILDDIR"
+echo "Build dir:         $CMLDIR"
+echo "Debug:             $DEBUG"
+echo "Base64 lib:        $BASE64"
+echo "Base64 lib:        $BASE64"
+echo "String lib:        $STRING"
+echo "List lib:          $LIST"
+echo "Mem pool lib:      $MPOOL"
+echo "Btree lib:         $BTREE"
+echo "Btree16 lib:       $BTREE16"
+echo "Btree32 lib:       $BTREE32"
+
+#check builddir
+echo "$BUILDDIR" | grep "^/"
+if [ "x1" = "x$?" ]; then
+   echo "Build directory path should be absolute path"
+   exit
+fi
+
+$echo_cmd -n "Checking endianness ... "
+cat << _END_ > cml_test_endian.c
+
+int main(void) {
+    int   i = 0xAABBCCDD;
+    char *p = (char *) &i;
+    return ( *p == 0xDD ) ? 1 : 0;
+}
+_END_
+
+cc -o cml_test_endian cml_test_endian.c > /dev/null 2>&1
+
+if [ "x$?" != "x0" ]; then
+    echo "Fail"
+    echo "C compiler not found"
+    exit
+fi
+
+rm -f cml_test_endian.c
+if [ -x ./cml_test_endian ]; then
+    if ./cml_test_endian; then
+        $echo_cmd -n "little ... "
+        ENDIAN_LITTLE_IN=1
+    else
+        $echo_cmd -n "big ... "
+        ENDIAN_LITTLE_IN=0
+    fi
+    rm -f ./cml_test_endian
+else
+    echo "check error"
+    exit
+fi
+echo "done"
+
+echo
+
+CFLAGS="-I${CMLDIR}"
+LDFLAGS="-L${CMLDIR}"
+
+if [ "x$DEBUG" = "xyes" ]; then
+   CFLAGS="$CFLAGS -DDEBUG"
+else
+   CFLAGS="$CFLAGS -DNDEBUG"
+fi
+
+INLIB=
+[ "x$BASE64"  = "xyes" ] && INLIB="$INLIB cml_base64.o"
+[ "x$STRING"  = "xyes" ] && INLIB="$INLIB cml_string.o"
+[ "x$LIST"    = "xyes" ] && INLIB="$INLIB cml_list.o"
+[ "x$MPOOL"   = "xyes" ] && INLIB="$INLIB cml_pool.o"
+[ "x$BTREE"   = "xyes" ] && INLIB="$INLIB btree.o"
+[ "x$BTREE16" = "xyes" ] && INLIB="$INLIB btree16.o"
+[ "x$BTREE32" = "xyes" ] && INLIB="$INLIB btree32.o"
+
+if [ -z "$INLIB" ]; then
+  echo Nothing to build. No any library included
+  exit
+fi
+
+$echo_cmd -n "Writting Makefile.cml ..."
+cat > Makefile.cml << __EOF__
+INLIB=$INLIB
+BUILDDIR=$BUILDDIR
+XCFLAGS=$CFLAGS
+XLDADD=$LDADD
+
+all:
+	env INLIB="\$(INLIB)" BUILDDIR="\$(BUILDDIR)" XCFLAGS="\$(XCFLAGS)" make -C "$CMLDIR" libcml
+
+__EOF__
+
+echo "  done"
+
+$echo_cmd -n "Writting Makefile include for CML ..."
+cat > Makefile.cml.incl << __EOF__
+CML_CFLAGS=-I$CMLDIR
+CML_LDADD=-L$CMLDIR -lcml
+
+__EOF__
+echo "  done"
+echo
+
+echo "Run make -f Makefile.cml"
+echo "This will build the libcml.a library into $BUILDDIR/" 
+echo 
+echo "Add 'include Makefile.cml.incl' into your Makefile"
+echo "Add \$(CML_CFLAGS) into your CFLAGS:"
+echo "Add \$(CML_LDADD) into your LDFLAGS"
+echo 
