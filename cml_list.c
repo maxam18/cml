@@ -11,7 +11,7 @@ void cml_list_move_all(cml_list_t *from, cml_list_t *to)
 {
     cml_list_t *listp;
 
-    CML_ILIST_LOOP(from, listp)
+    CML_LIST_LOOP(from, listp)
     {
         CML_LIST_REMOVE(listp);
         CML_LIST_ADD(to, listp);

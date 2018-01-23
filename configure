@@ -120,7 +120,6 @@ echo "Lib source dir:    $BUILDDIR"
 echo "Build dir:         $CMLDIR"
 echo "Debug:             $DEBUG"
 echo "Base64 lib:        $BASE64"
-echo "Base64 lib:        $BASE64"
 echo "String lib:        $STRING"
 echo "List lib:          $LIST"
 echo "Mem pool lib:      $MPOOL"
@@ -211,7 +210,7 @@ echo "  done"
 $echo_cmd -n "Writting Makefile include for CML ..."
 cat > Makefile.cml.incl << __EOF__
 CML_CFLAGS=-I$CMLDIR
-CML_LDADD=-L$CMLDIR -lcml
+CML_LDADD=-L$BUILDDIR -lcml
 
 __EOF__
 echo "  done"
