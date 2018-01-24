@@ -8,7 +8,9 @@ else
     VERSION=0.1
 fi
 
-OSTYPE=Linux
+CMD_VAR=$1
+
+CFLAGS=
 BUILDDIR=`pwd`
 CMLDIR=`dirname $0`
 
@@ -17,21 +19,18 @@ if [ "x0" = "x$?" ]; then
     CMLDIR="${BUILDDIR}/`echo ${CMLDIR} | colrm 1 2`"
 fi
 
-uname -a | grep "Linux" > /dev/null
-[ "x$?" = "x1" ] && OSTYPE="FreeBSD"
-
-CMD_VAR=$1
-
-OSLINUX="#"
-OSFREEBSD="#"
-DEFINE_LINUX_IN=OTHER
+OSTYPE=`uname -a | sed -a 's/ .*//'`
 if [ "x$OSTYPE" = "xLinux" ]; then
     echo_cmd=echo
-    DEFINE_LINUX_IN="LINUX"
-    OSLINUX=
+    TARGETOS=linux
+    CFLAGS="$CFLAGS -DCML_OSLINUX"
+elif [ "x$OSTYPE" = "xDarwin" ]; then
+    echo_cmd=/bin/echo
+    TARGETOS=macos
+    CFLAGS="$CFLAGS -DCML_OSMACOS"
 else
     echo_cmd=/bin/echo
-    OSFREEBSD=
+    TARGETOS=freebsd
 fi
 
 usage()
@@ -56,6 +55,7 @@ DEBUG=
 BASE64=yes
 STRING=yes
 LIST=no
+LOG=no
 MPOOL=no
 BTREE=no
 BTREE16=no
@@ -97,6 +97,9 @@ do
 		list)
 		    LIST=$BSET
 		;;
+		log)
+		    LOG=$BSET
+		;;
 		btree16)
 		    BTREE16=$BSET
 		;;
@@ -122,6 +125,7 @@ echo "Debug:             $DEBUG"
 echo "Base64 lib:        $BASE64"
 echo "String lib:        $STRING"
 echo "List lib:          $LIST"
+echo "Log lib:           $LIST"
 echo "Mem pool lib:      $MPOOL"
 echo "Btree lib:         $BTREE"
 echo "Btree16 lib:       $BTREE16"
@@ -156,10 +160,10 @@ rm -f cml_test_endian.c
 if [ -x ./cml_test_endian ]; then
     if ./cml_test_endian; then
         $echo_cmd -n "little ... "
-        ENDIAN_LITTLE_IN=1
+        CFLAGS="$CFLAGS -DCML_ENDIANLITTLE"
     else
         $echo_cmd -n "big ... "
-        ENDIAN_LITTLE_IN=0
+        CFLAGS="$CFLAGS -DCML_ENDIANBIG"
     fi
     rm -f ./cml_test_endian
 else
@@ -170,7 +174,7 @@ echo "done"
 
 echo
 
-CFLAGS="-I${CMLDIR}"
+CFLAGS="$CFLAGS -I${CMLDIR}"
 LDFLAGS="-L${CMLDIR}"
 
 if [ "x$DEBUG" = "xyes" ]; then
@@ -179,10 +183,15 @@ else
    CFLAGS="$CFLAGS -DNDEBUG"
 fi
 
+if [ "x$LOG" = "xyes" ]; then
+   CFLAGS="$CFLAGS -DCML_LOG_LOG"
+fi
+
 INLIB=
 [ "x$BASE64"  = "xyes" ] && INLIB="$INLIB cml_base64.o"
 [ "x$STRING"  = "xyes" ] && INLIB="$INLIB cml_string.o"
 [ "x$LIST"    = "xyes" ] && INLIB="$INLIB cml_list.o"
+[ "x$LOG"     = "xyes" ] && INLIB="$INLIB cml_log.o"
 [ "x$MPOOL"   = "xyes" ] && INLIB="$INLIB cml_pool.o"
 [ "x$BTREE"   = "xyes" ] && INLIB="$INLIB btree.o"
 [ "x$BTREE16" = "xyes" ] && INLIB="$INLIB btree16.o"
@@ -210,6 +219,7 @@ echo "  done"
 $echo_cmd -n "Writting Makefile include for CML ..."
 cat > Makefile.cml.incl << __EOF__
 CML_CFLAGS=-I$CMLDIR
+CML_XCFLAGS=$CFLAGS
 CML_LDADD=-L$BUILDDIR -lcml
 
 __EOF__

@@ -5,6 +5,8 @@
  * Copyright (c) 2018 ..."
  */
 
+#include <cml.h>
+
 #ifndef _CML_LOG_H
 #define _CML_LOG_H
 
@@ -18,12 +20,39 @@
 
 #define CML_LOG_ANY         8
 
+#define CML_LOG_FLAG_TIME   0x01
+#define CML_LOG_FLAG_PRIO   0x02
+
+typedef struct cml_log_s cml_log_t;
+struct cml_log_s
+{
+    int              fd;
+    unsigned char    flags;
+    const char      *progname;
+    char             buf[2048];
+};
+
 #ifndef CML_LOG_LOG
 
-#define cml_log_log(L, F, args...) fprintf(stderr, F "\n", ##args)
+#define cml_log_init(A, B)
+#define cml_log(L, F, args...) fprintf(stderr, F "\n", ##args)
 
 #else
 /* some sophisticated stuff here. Like logging to the syslog */
+extern cml_log_t _cml_log_info;
+void cml_log_init(unsigned char flags, const char *filename, const char *progname);
+void cml_log(unsigned char prio, char *format, ...);
+
+#endif
+
+#ifndef NDEBUG
+
+#define cml_d(F, args...)       fprintf( stderr, F "\n", ##args)
+
+#else
+
+#define cml_d(F, args...)
+
 #endif
 
 #endif
