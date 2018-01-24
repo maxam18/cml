@@ -1,0 +1,5 @@
+#!/bin/bash
+
+CMLDIR="`pwd`/.."
+
+${CMLDIR}/configure --enable-list --enable-log --debug=yes
