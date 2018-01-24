@@ -14,6 +14,7 @@
 
 void print_i_t_list(cml_ilist_t *head);
 void print_i_t_list_slave(cml_ilist_t *head);
+void remove_list_print(cml_ilist_t *listp);
 
 typedef struct i_s i_t;
 struct i_s
@@ -135,10 +136,7 @@ int main(void)
 
         if( ip->i == 6 )
         {
-            cml_d("   list prev before: %X", (int)listp->prev);
             CML_ILIST_REMOVE(listp);
-            cml_d("   list prev after: %X", (int)listp->prev);
-            listp = listp->prev;
         }
     }
 
@@ -168,6 +166,33 @@ int main(void)
     return 0;
 }
 
+void remove_list_print(cml_ilist_t *listp)
+{
+    cml_ilist_t *prev, *curr, *next;
+
+    prev = listp->prev;
+    curr  = listp;
+    next = listp->next;
+
+    cml_d("prev: %X <- %X -> %X", (int)prev->prev, (int)prev, (int)prev->next);
+    cml_d("cur : %X <- %X -> %X", (int)curr->prev, (int)curr, (int)curr->next);
+    cml_d("next: %X <- %X -> %X", (int)next->prev, (int)next, (int)next->next);
+    
+    cml_d("relink (L)->prev->next");
+    listp->prev->next = listp->next;
+
+    cml_d("prev: %X <- %X -> %X", (int)prev->prev, (int)prev, (int)prev->next);
+    cml_d("cur : %X <- %X -> %X", (int)curr->prev, (int)curr, (int)curr->next);
+    cml_d("next: %X <- %X -> %X", (int)next->prev, (int)next, (int)next->next);
+    cml_d("relink (L)->next->prev");
+    listp->next->prev = listp->prev;
+
+    cml_d("prev: %X <- %X -> %X", (int)prev->prev, (int)prev, (int)prev->next);
+    cml_d("cur : %X <- %X -> %X", (int)curr->prev, (int)curr, (int)curr->next);
+    cml_d("next: %X <- %X -> %X", (int)next->prev, (int)next, (int)next->next);
+
+    cml_d("listp: %X <- %X -> %X", (int)listp->prev, (int)listp, (int)listp->next);
+}
 void print_i_t_list(cml_ilist_t *head)
 { 
     cml_ilist_t *listp, *listp_o;
