@@ -19,7 +19,7 @@ if [ "x0" = "x$?" ]; then
     CMLDIR="${BUILDDIR}/`echo ${CMLDIR} | colrm 1 2`"
 fi
 
-OSTYPE=`uname -a | sed -a 's/ .*//'`
+OSTYPE=`uname -a | sed -e 's/ .*//'`
 if [ "x$OSTYPE" = "xLinux" ]; then
     echo_cmd=echo
     TARGETOS=linux
@@ -63,13 +63,13 @@ BTREE32=no
 
 while [ "x$CMD_VAR" != "x" ]; 
 do
-	OPTARG=`expr "x$CMD_VAR" : 'x[^=]*=\(.*\)'`
-	OPTION=`expr "x$CMD_VAR" : 'x\(.*\)=.*'`
+    OPTARG=`expr "x$CMD_VAR" : 'x[^=]*=\(.*\)'`
+    OPTION=`expr "x$CMD_VAR" : 'x\(.*\)=.*'`
     ENADIS=`expr "x$CMD_VAR" : 'x--\(.*\)-[a-z].*'`
-    BSET=
 
-    [ "x$ENADIS" == "xenable" ] && BSET=yes
-    [ "x$ENADIS" == "xdisable" ] && BSET=no
+    BSET=
+    [ "x$ENADIS" = "xenable" ] && BSET=yes
+    [ "x$ENADIS" = "xdisable" ] && BSET=no
 
     if [ -n "$BSET" ]; then
        OPTION=`expr "x$CMD_VAR" : 'x.*le*-\(.*\)'`
@@ -79,9 +79,9 @@ do
 		--builddir)
 		    BUILDDIR=$OPTARG
 		;;
-        debug)
-			DEBUG=$BSET
-        ;;
+                --debug)
+                    DEBUG=$OPTARG
+        	;;
 		base64)
 		    BASE64=$BSET
 		;;
@@ -178,7 +178,7 @@ CFLAGS="$CFLAGS -I${CMLDIR}"
 LDFLAGS="-L${CMLDIR}"
 
 if [ "x$DEBUG" = "xyes" ]; then
-   CFLAGS="$CFLAGS -DDEBUG"
+   CFLAGS="$CFLAGS -DDEBUG -ggdb"
 else
    CFLAGS="$CFLAGS -DNDEBUG"
 fi

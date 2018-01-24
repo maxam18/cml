@@ -23,6 +23,8 @@
 #define CML_LOG_FLAG_TIME   0x01
 #define CML_LOG_FLAG_PRIO   0x02
 
+#define CML_LOG_CLOCK_SRC   CLOCK_REALTIME
+
 typedef struct cml_log_s cml_log_t;
 struct cml_log_s
 {

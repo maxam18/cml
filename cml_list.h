@@ -34,18 +34,25 @@ struct cml_ilist {
 #define offsetof(s,m) (size_t)&(((s *)0)->m)
 #endif
 
-#define CML_ILIST_ENTRY(L,T,N)  (T *)(L - offsetof(T,N))
+#define CML_ILIST_ENTRY(L,T,N)  (T *)((char *)L - offsetof(T,N))
 #define CML_LIST_INIT(L)        (L)->next = (L)->prev = L
-#define CML_LIST_ADD(L,E)       (E)->next       = L; \
-                                (E)->prev       = (L)->prev; \
-                                (L)->prev->next = E; \
-                                (L)->prev       = E
+#define CML_ILIST_INIT          CML_LIST_INIT
+#define CML_LIST_ADD(L,N)       (N)->prev       = L; \
+                                (N)->next       = (L)->next; \
+                                (L)->next->prev = N; \
+                                (L)->next       = N
+#define CML_ILIST_ADD           CML_LIST_ADD
 #define CML_LIST_REMOVE(L)      (L)->prev->next = (L)->next; \
                                 (L)->next->prev = (L)->prev
-#define CML_LIST_LOOP           CML_ILIST_LOOP
-#define CML_ILIST_LOOP(H,L)     for( L = (H)->next \
+#define CML_ILIST_REMOVE        CML_LIST_REMOVE
+#define CML_LIST_LOOP(H,L)      for( L = (H)->next \
                                     ; L != (H) \
                                     ; L = L->next )
+#define CML_ILIST_LOOP          CML_LIST_LOOP
+#define CML_LIST_LOOP_BW(H,L)   for( L = (H)->prev \
+                                    ; L != (H) \
+                                    ; L = L->prev )
+#define CML_ILIST_LOOP_BW       CML_LIST_LOOP_BW
 
 void cml_ilist_move_all(cml_ilist_t *from, cml_ilist_t *to);
 void cml_list_move_all(cml_list_t *from, cml_list_t *to);
