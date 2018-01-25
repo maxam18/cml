@@ -210,6 +210,7 @@ XCFLAGS=$CFLAGS
 XLDADD=$LDADD
 
 all:
+	env INLIB="\$(INLIB)" BUILDDIR="\$(BUILDDIR)" XCFLAGS="\$(XCFLAGS)" make -C "$CMLDIR" clean
 	env INLIB="\$(INLIB)" BUILDDIR="\$(BUILDDIR)" XCFLAGS="\$(XCFLAGS)" make -C "$CMLDIR" libcml
 
 __EOF__
