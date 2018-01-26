@@ -9,8 +9,19 @@
 
 void cml_list_move_all(cml_list_t *from, cml_list_t *to)
 {
-    cml_list_t *listp, *listp_prev;
+    if( from->next == from )
+        return;
 
+    from->next->prev = to->prev;
+    from->prev->next = to->next;
+
+    to->prev->next = from->next;
+    to->next->prev = from->prev;
+
+    from->prev = from->next = from;
+
+/*
+    cml_list_t *listp, *listp_prev;
     CML_LIST_LOOP(from, listp)
     {
         listp_prev = listp->prev;
@@ -18,12 +29,24 @@ void cml_list_move_all(cml_list_t *from, cml_list_t *to)
         CML_LIST_ADD(to, listp);
         listp = listp_prev;
     }
+*/
 }
 
 void cml_ilist_move_all(cml_ilist_t *from, cml_ilist_t *to)
 {
-    cml_ilist_t *listp, *listp_prev;
+    if( from->next == from )
+        return;
 
+    from->next->prev = to->prev;
+    from->prev->next = to->next;
+
+    to->prev->next = from->next;
+    to->next->prev = from->prev;
+
+    from->prev = from->next = from;
+
+/*
+    cml_ilist_t *listp, *listp_prev;
     CML_ILIST_LOOP(from, listp)
     {
         listp_prev = listp->prev;
@@ -31,5 +54,6 @@ void cml_ilist_move_all(cml_ilist_t *from, cml_ilist_t *to)
         CML_LIST_ADD(to, listp);
         listp = listp_prev;
     }
+*/
 }
 

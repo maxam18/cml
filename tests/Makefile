@@ -25,5 +25,5 @@ clean:
 	rm -f *.*~ *.o *.core core* $(PROGS)
 
 distclean: clean
-	rm -rf *.a
+	rm -rf *.a Makefile.cml*
 

@@ -155,7 +155,7 @@ int main(void)
 
 
     cml_d("Move all at main list to free list");
-    cml_ilist_move_all(&i_list, &i_list_free);
+    CML_ILIST_MOVE_ALL(&i_list, &i_list_free);
 
     cml_d("Print main list:");
     print_i_t_list(&i_list);

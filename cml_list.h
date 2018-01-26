@@ -54,6 +54,15 @@ struct cml_ilist {
                                     ; L = L->prev )
 #define CML_ILIST_LOOP_BW       CML_LIST_LOOP_BW
 
+#define CML_LIST_MOVE_ALL(F,T)  if( (F)->next != (F) ) { \
+                                (F)->next->prev = (T)->prev;\
+                                (F)->prev->next = (T)->next;\
+                                (T)->prev->next = (F)->next;\
+                                (T)->next->prev = (F)->prev;\
+                                (F)->prev = (F)->next = (F); }
+#define CML_ILIST_MOVE_ALL      CML_LIST_MOVE_ALL
+
+
 void cml_ilist_move_all(cml_ilist_t *from, cml_ilist_t *to);
 void cml_list_move_all(cml_list_t *from, cml_list_t *to);
 
