@@ -12,9 +12,12 @@
 
 
 #ifdef CML_OSMACOS
-#   define CML_CLOCK_SOURCE   CLOCK_MONOTONIC_RAW_APPROX
+# define CML_CLOCK_SOURCE   CLOCK_MONOTONIC_RAW_APPROX
+# ifndef clock_gettime
+#  define clock_gettime(S,D) tsc.tv_sec = time(NULL); tsc.tv_nsec = 0 
+# endif
 #else
-#   define CML_CLOCK_SOURCE   CLOCK_MONOTONIC_COARSE
+# define CML_CLOCK_SOURCE   CLOCK_MONOTONIC_COARSE
 #endif
 
 #endif
