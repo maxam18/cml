@@ -1,5 +1,6 @@
 #!/bin/bash
 
-CMLDIR="`pwd`/.."
+CMLDIR=`pwd`
+CMLDIR="`expr "$CMLDIR" : '\(.*\)test'`"
 
 ${CMLDIR}/configure --enable-list --enable-log --debug=yes
