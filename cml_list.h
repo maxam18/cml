@@ -34,9 +34,10 @@ struct cml_ilist {
 #define offsetof(s,m) (size_t)&(((s *)0)->m)
 #endif
 
-#define CML_ILIST_ENTRY(L,T,N)  (T *)((char *)L - offsetof(T,N))
+#define CML_ILIST_ENTRY(L,T,N)  (T *)((char *)L - (offsetof(T,N)))
 #define CML_LIST_INIT(L)        (L)->next = (L)->prev = L
 #define CML_ILIST_INIT          CML_LIST_INIT
+
 #define CML_LIST_ADD(L,N)       (N)->prev       = L; \
                                 (N)->next       = (L)->next; \
                                 (L)->next->prev = N; \
@@ -55,10 +56,10 @@ struct cml_ilist {
 #define CML_ILIST_LOOP_BW       CML_LIST_LOOP_BW
 
 #define CML_LIST_MOVE_ALL(F,T)  if( (F)->next != (F) ) { \
-                                (F)->next->prev = (T)->prev;\
+                                (F)->next->prev = (T);\
                                 (F)->prev->next = (T)->next;\
-                                (T)->prev->next = (F)->next;\
                                 (T)->next->prev = (F)->prev;\
+                                (T)->next       = (F)->next;\
                                 (F)->prev = (F)->next = (F); }
 #define CML_ILIST_MOVE_ALL      CML_LIST_MOVE_ALL
 

@@ -5,6 +5,7 @@
  * Copyright (c) 2018 ..."
  */
 
+#include <cml.h>
 #include <cml_log.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -19,6 +20,8 @@ cml_log_t   _cml_log_info;
 
 const char *_cml_log_priostr[] = 
 { "NONE", "ERROR", "CRITICAL", "WARNING", "EMERG", "NOTICE", "INFO", "DEBUG"};
+
+#ifdef CML_LOG_LOG
 
 void cml_log_init(unsigned char flags, const char *filename, const char *progname)
 {
@@ -93,3 +96,6 @@ void cml_log(unsigned char prio, char *format, ... )
 
     write( _cml_log_info.fd, _cml_log_info.buf, p - _cml_log_info.buf);
 }
+
+#endif
+

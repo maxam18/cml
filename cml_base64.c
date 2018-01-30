@@ -79,7 +79,7 @@ int cml_base64_decode(const unsigned char *str, size_t len, unsigned char *buf)
 
   while (rtable[*inbuf++] <= 63 && len--);
   
-  nbytes = (inbuf - str) - 1;
+  nbytes = (int)(inbuf - str) - 1;
 
   inbuf  = str;
   outbuf = buf;
