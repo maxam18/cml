@@ -43,6 +43,7 @@ struct cml_log_s
 /* some sophisticated stuff here. Like logging to the syslog */
 extern cml_log_t _cml_log_info;
 void cml_log_init(unsigned char flags, const char *filename, const char *progname);
+void cml_log_reopen(const char *filename);
 void cml_log(unsigned char prio, char *format, ...);
 
 #endif

@@ -27,17 +27,8 @@ void cml_log_init(unsigned char flags, const char *filename, const char *prognam
 {
     bzero(&_cml_log_info, sizeof(_cml_log_info));
 
-    if( filename )
-    {
-        _cml_log_info.fd = open( filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-        if( _cml_log_info.fd < 0 )
-        {
-            fprintf( stderr, "Cannot open logfile: %s Using stderr instead\n"
-                           , strerror(errno));
-            _cml_log_info.fd = fileno(stderr);
-        }
-    } else
-        _cml_log_info.fd = fileno(stderr);
+    cml_log_reopen(filename);
+
 
     if( progname )
         _cml_log_info.progname = progname;
@@ -46,6 +37,25 @@ void cml_log_init(unsigned char flags, const char *filename, const char *prognam
 
     _cml_log_info.flags = flags;
 
+}
+
+void cml_log_reopen(const char *filename)
+{
+    if( filename )
+    {
+        if( _cml_log_info.fd >= 0 )
+            close(_cml_log_info.fd);
+            
+        _cml_log_info.fd = open( filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+        
+        if( _cml_log_info.fd >= 0 )
+            return;
+        
+        fprintf( stderr, "Cannot open logfile: %s Using stderr instead\n"
+                    , strerror(errno));
+    }
+    
+    _cml_log_info.fd = fileno(stderr);
 }
 
 void cml_log(unsigned char prio, char *format, ... )
