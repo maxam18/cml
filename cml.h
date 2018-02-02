@@ -12,8 +12,8 @@
 
 #ifdef CML_OSMACOS
 # define CML_CLOCK_SOURCE   CLOCK_MONOTONIC_RAW_APPROX
-# ifndef clock_gettime
-#  define clock_gettime(S,D) (D)->tv_sec = time(NULL); (D)->tv_nsec = 0 
+# ifdef CML_OSMACOS_OLDER1012
+#  define clock_gettime(S,D) (D)->tv_sec = time(NULL); (D)->tv_nsec = 0
 # endif
 #else
 # define CML_CLOCK_SOURCE   CLOCK_MONOTONIC_COARSE
