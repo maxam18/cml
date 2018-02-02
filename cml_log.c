@@ -27,6 +27,8 @@ void cml_log_init(unsigned char flags, const char *filename, const char *prognam
 {
     bzero(&_cml_log_info, sizeof(_cml_log_info));
 
+    _cml_log_info.fd = -1;
+
     cml_log_reopen(filename);
 
 
