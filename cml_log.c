@@ -98,10 +98,10 @@ void cml_log(unsigned char prio, char *format, ... )
     n = vsnprintf( p, len, format, args);
     va_end(args);
 
-    p   += n;
-    len -= n;
+    p    += n;
+    len  -= n;
 
-    *--p  = '\n';
+    *p++  = '\n';
     *p    = '\0';
 
     write( _cml_log_info.fd, _cml_log_info.buf, p - _cml_log_info.buf);
