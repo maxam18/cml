@@ -20,8 +20,8 @@
 
 #define CML_LOG_ANY         8
 
-#define CML_LOG_FLAG_TIME   0x01
-#define CML_LOG_FLAG_PRIO   0x02
+#define CML_LOG_FLAG_TIME    0x01
+#define CML_LOG_FLAG_PRIO    0x02
 
 #define CML_LOG_CLOCK_SRC   CLOCK_REALTIME
 

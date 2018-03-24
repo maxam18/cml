@@ -8,6 +8,8 @@
 #ifndef _CML_LIST_H
 #define _CML_LIST_H
 
+#include <stddef.h>
+
 typedef struct cml_vec cml_vec_t;
 
 struct cml_slist {
