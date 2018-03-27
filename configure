@@ -5,7 +5,7 @@
 if [ -n "$CML_VERSION" ]; then
     VERSION=$CML_VERSION
 else
-    VERSION=0.1
+    VERSION=1.5
 fi
 
 CMD_VAR=$1
