@@ -35,8 +35,9 @@ struct cml_log_s
 };
 
 #ifndef CML_LOG_LOG
+#include <stdio.h>
 
-#define cml_log_init(A, B)
+#define cml_log_init(A, B, C)
 #define cml_log(L, F, args...) fprintf(stderr, F "\n", ##args)
 
 #else

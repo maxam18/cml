@@ -12,9 +12,9 @@
 
 typedef struct cml_vec cml_vec_t;
 
-struct cml_slist {
+struct cml_vec {
     void                *elem;
-    struct cml_vec_t    *next;
+    struct cml_vec      *next;
 };
 
 typedef struct cml_list cml_list_t;

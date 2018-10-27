@@ -19,7 +19,7 @@ include Makefile.inc
 	$(CC) $(CFLAGS) -c $<
 
 libcml: $(OBJS)
-	$(LA) rcs $(CMLLIB) $(OBJS) 
+	$(LA) rcs "$(CMLLIB)" $(OBJS) 
 
 clean:
 	rm -f *.*~ *.o *.core core*

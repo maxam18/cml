@@ -43,24 +43,25 @@ usage()
     echo "                           Default: $BUILDDIR"
 	echo "   --debug=yes           - enable debug"
 	echo "   --test=yes            - enable test"
-    echo "   --enable/disable      - enable/disable libs"
-	echo "   --(en/dis)able-base64       - (in/ex)clude base64 functions"
-	echo "   --(en/dis)able-string       - (in/ex)clude string functions"
-	echo "   --(en/dis)able-list         - (in/ex)clude list functions"
-	echo "   --(en/dis)able-btree        - (in/ex)clude btree functions"
-	echo "   --(en/dis)able-btree16      - (in/ex)clude btree16 functions"
-	echo "   --(en/dis)able-btree32      - (in/ex)clude btree32 functions"
+	echo "   --disable-base64       - base64 functions"
+	echo "   --disable-string       - string functions"
+	echo "   --disable-list         - list functions"
+	echo "   --disable-log          - log functions"
+	echo "   --disable-btree        - btree functions"
+	echo "   --disable-btree16      - btree16 functions"
+	echo "   --disable-btree32      - btree32 functions"
+	echo "   --disable-mpool        - memory pool functions"
 }
 
 DEBUG=
 BASE64=yes
-STRING=no
+STRING=yes
 LIST=yes
 LOG=yes
-MPOOL=no
-BTREE=no
-BTREE16=no
-BTREE32=no
+MPOOL=yes
+BTREE=yes
+BTREE16=yes
+BTREE32=yes
 
 while [ "x$CMD_VAR" != "x" ]; 
 do
@@ -220,9 +221,9 @@ echo "  done"
 
 $echo_cmd -n "Writting Makefile include for CML ..."
 cat > Makefile.cml.incl << __EOF__
-CML_CFLAGS=-I$CMLDIR
+CML_CFLAGS=-I "$CMLDIR"
 CML_XCFLAGS=$CFLAGS
-CML_LDADD=-L$BUILDDIR -lcml
+CML_LDADD=-L "$BUILDDIR" -lcml -lrt
 
 __EOF__
 echo "  done"
