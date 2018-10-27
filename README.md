@@ -1,29 +1,29 @@
-#C My Library  - general purpose library collection
+# C My Library  - general purpose library collection
 
-Modules (libraries)
-1. List implementation
+## Modules (libraries)
+### List implementation
 exclusive and inclusive
 cml_list.h
 cml_list.c
 
 ilist use example
 
-Example:
+*Example:*
 you have a list of parameters
 and want to have a list of only strings
 
-typedef struct my_stru my_stru_t;
+`typedef struct my_stru my_stru_t;
 struct my_stru
 {
     cml_ilist_t    strings;
     cml_ilist_t    parameters;
 
     cml_str_t      string;
-};
+};`
 
 then you have list header somewhere
 
-int main(void)
+`int main(void)
 {
     cml_ilist_t  str_head;
     cml_ilist_t  par_head;
@@ -45,9 +45,9 @@ int main(void)
     }
 
     return 0;
-}
+}`
 
-2. String and buffer 
+### String and buffer 
 cml_string.h
 cml_string.c
 
@@ -56,20 +56,17 @@ cml_str_t {data - char pointer, len - length }
 and enchancement of str_t
 cml_buf_t {buf - char pointer, pos - pointer to the current position, end - pointer to the buffer's end, size - allocated size}
 
-3. base64 (en/de)code
+### base64 (en/de)code
 
-4. cml_log
+### cml_log
 Logging functions
 
-5. cml_pool
+### cml_pool
 simple memory buffer management
 
-6. Various binary trees
+### Various binary trees
 btree - key and data are pointers
 btree16 - key is int16 with internal cmp function
 btree32 - key is int32 with internal cmp function
 
 Red/Black tree implemented
-
-Copyright Max Amzarakov maxam18 _at_ gmail.com
-
