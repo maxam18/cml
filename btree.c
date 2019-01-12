@@ -21,14 +21,14 @@ static void bt_rb_norm(bt_info_t *info, bt_node_t *node);
 
 bt_info_t *bt_create(bt_info_t *info, bt_node_t *root, int (*cmp)(const void *, const void *), void *data)
 {
-	info->root      = root;
-	info->cmp       = cmp;
+    info->root      = root;
+    info->cmp       = cmp;
     info->userinfo  = data;
     info->nul       = calloc(1, sizeof(bt_node_t));
     root->color     = info->nul->color = BT_BLACK;
     root->left      = root->right = root->parent = info->nul;
  
-	return info;
+    return info;
 }
 
 void bt_insert(bt_info_t *info, bt_node_t *node)
@@ -38,78 +38,78 @@ void bt_insert(bt_info_t *info, bt_node_t *node)
     current = next = info->root;
     
     node->color = BT_RED;
-	node->right = node->left = info->nul;
+    node->right = node->left = info->nul;
 
-	while( next != info->nul )
-	{
+    while( next != info->nul )
+    {
         current = next;
-		if( info->cmp(node->key, current->key) > 0 )
-			next = current->right;
-		else
-			next = current->left;
-	}
+        if( info->cmp(node->key, current->key) > 0 )
+            next = current->right;
+        else
+            next = current->left;
+    }
     
-	if( info->cmp(node->key, current->key) > 0 )
-		current->right = node;
-	else
-		current->left = node;
+    if( info->cmp(node->key, current->key) > 0 )
+        current->right = node;
+    else
+        current->left = node;
 
     node->parent = current;
 
-	bt_rb_norm(info, node);
+    bt_rb_norm(info, node);
 
-	return;
+    return;
 }
 
 void bt_delete(bt_info_t *info, bt_node_t *node)
 {
-	bt_node_t *swapnode, *leftnode;
+    bt_node_t *swapnode, *leftnode;
 
-	if( node->left == info->nul )
-	{
-		swapnode = node->right;
-	} else if ( node->right == info->nul )
-	{
-		swapnode = node->left;
-	} else
-	{
-		swapnode = node->right;
-		leftnode = swapnode;
-		while( leftnode->left != info->nul )
-		{
-			leftnode = leftnode->left;
-		}
-		leftnode->left = node->left;
-	}
-	swapnode->parent = node->parent;
-	if( node->parent != info->nul )
-	{
-		if( node->parent->left == node )
-			node->parent->left = swapnode;
-		else
-			node->parent->right = swapnode;
-	} else
-		info->root = swapnode;
+    if( node->left == info->nul )
+    {
+        swapnode = node->right;
+    } else if ( node->right == info->nul )
+    {
+        swapnode = node->left;
+    } else
+    {
+        swapnode = node->right;
+        leftnode = swapnode;
+        while( leftnode->left != info->nul )
+        {
+            leftnode = leftnode->left;
+        }
+        leftnode->left = node->left;
+    }
+    swapnode->parent = node->parent;
+    if( node->parent != info->nul )
+    {
+        if( node->parent->left == node )
+            node->parent->left = swapnode;
+        else
+            node->parent->right = swapnode;
+    } else
+        info->root = swapnode;
 }
 
 bt_node_t *bt_find(bt_info_t *info, void *key)
 {
-	bt_node_t *current = info->root;
-	int found = 1;
-	
-	while( current != info->nul )
-	{
-		if( (found = info->cmp(key, current->key) ) == 0 )
-		{
-			break;
-		}
-		if( found > 0 )
-			current = current->right;
-		else
-			current = current->left;
-	}
+    bt_node_t *current = info->root;
+    int found = 1;
+    
+    while( current != info->nul )
+    {
+        if( (found = info->cmp(key, current->key) ) == 0 )
+        {
+            break;
+        }
+        if( found > 0 )
+            current = current->right;
+        else
+            current = current->left;
+    }
 
-	return found == 0 ? current : NULL;
+    return found == 0 ? current : NULL;
 }
 
 void *bt_get(bt_info_t *info, void *key)
@@ -134,12 +134,12 @@ void *bt_get(bt_info_t *info, void *key)
 
 void bt_walk(bt_info_t *info, bt_node_t *node, void (*cmd)(void *, void *))
 {
-	if( node != info->nul )
-	{
+    if( node != info->nul )
+    {
         bt_walk(info, node->left , cmd);
-		cmd(node->data, info->userinfo);
+        cmd(node->data, info->userinfo);
         bt_walk(info, node->right, cmd);
-	}
+    }
 }
 
 void bt_walk_nr(bt_info_t *info, bt_node_t *node, void (*cmd)(void *, void*))
@@ -208,117 +208,117 @@ void bt_walk_nr(bt_info_t *info, bt_node_t *node, void (*cmd)(void *, void*))
 
 static void bt_turn_right(bt_info_t *info, bt_node_t *node)/*{{{*/
 {
-	bt_node_t *left = node->left;
+    bt_node_t *left = node->left;
 
-	if( left == info->nul )
-		return;
+    if( left == info->nul )
+        return;
 
-	left->parent = node->parent;
-	if( node->parent != info->nul )
-	{
-		if( node->parent->left == node )
-			node->parent->left = left;
-		else
-			node->parent->right = left;
-	} else
-		info->root = left;
-	node->left = left->right;
-	node->left->parent = node;
-	left->right = node;
-	node->parent = left;
+    left->parent = node->parent;
+    if( node->parent != info->nul )
+    {
+        if( node->parent->left == node )
+            node->parent->left = left;
+        else
+            node->parent->right = left;
+    } else
+        info->root = left;
+    node->left = left->right;
+    node->left->parent = node;
+    left->right = node;
+    node->parent = left;
 }/*}}}*/
 
 static void bt_turn_left(bt_info_t *info, bt_node_t *node)/*{{{*/
 {
-	bt_node_t *right = node->right;
+    bt_node_t *right = node->right;
 
-	if( right == info->nul )
-		return;
-	right->parent = node->parent;
-	if( node->parent != info->nul )
-	{
-		if( node->parent->left == node )
-			node->parent->left = right;
-		else
-			node->parent->right = right;
-	} else
-		info->root = right;
-	node->right = right->left;
+    if( right == info->nul )
+        return;
+    right->parent = node->parent;
+    if( node->parent != info->nul )
+    {
+        if( node->parent->left == node )
+            node->parent->left = right;
+        else
+            node->parent->right = right;
+    } else
+        info->root = right;
+    node->right = right->left;
     node->right->parent = node;
-	right->left = node;
-	node->parent = right;
+    right->left = node;
+    node->parent = right;
 }/*}}}*/
 
 static void bt_rb_norm(bt_info_t *info, bt_node_t *node)/*{{{*/
 {
-	bt_node_t *uncle;
-	int left;
+    bt_node_t *uncle;
+    int left;
 
     /* node cannot be null at this point. node->parent == NULL means nul node */
     if( !node->parent || !node->parent->parent )
         return; /* no grandparent */
 
-	if( node->parent->color == BT_BLACK )
-		return; /* rb Ok! */
+    if( node->parent->color == BT_BLACK )
+        return; /* rb Ok! */
     
-	/* if parent is red it is not a root, get uncle */
-	if( node->parent->parent->left == node->parent )
-	{
-		uncle = node->parent->parent->right;
-		left = 1;
-	} else
-	{
-		uncle = node->parent->parent->left;
-		left = 0;
-	}
+    /* if parent is red it is not a root, get uncle */
+    if( node->parent->parent->left == node->parent )
+    {
+        uncle = node->parent->parent->right;
+        left = 1;
+    } else
+    {
+        uncle = node->parent->parent->left;
+        left = 0;
+    }
     if( !uncle )
         return; /* no uncle */
     
-	if( uncle->color == BT_RED )
-	{ /* uncle is red */
-		uncle->parent->right->color = BT_BLACK; /* node's uncle */
-		uncle->parent->left->color = BT_BLACK; /* node's parent */
+    if( uncle->color == BT_RED )
+    { /* uncle is red */
+        uncle->parent->right->color = BT_BLACK; /* node's uncle */
+        uncle->parent->left->color = BT_BLACK; /* node's parent */
         uncle->parent->color = BT_RED;
-		bt_rb_norm(info, uncle->parent);
-	} else
-	{
-		if( left && node->parent->right == node)
-		{		
-			bt_turn_left(info, node->parent);
-			node = node->left;
-		} else if( left == 0 && node->parent->left == node )
-		{
-			bt_turn_right(info, node->parent);
-			node = node->right;
-		}
-		node->parent->color = BT_BLACK;
-		node->parent->parent->color = BT_RED;
-		if( left )
-			bt_turn_right(info, node->parent->parent);
-		else
-			bt_turn_left(info, node->parent->parent);
-	}
+        bt_rb_norm(info, uncle->parent);
+    } else
+    {
+        if( left && node->parent->right == node)
+        {        
+            bt_turn_left(info, node->parent);
+            node = node->left;
+        } else if( left == 0 && node->parent->left == node )
+        {
+            bt_turn_right(info, node->parent);
+            node = node->right;
+        }
+        node->parent->color = BT_BLACK;
+        node->parent->parent->color = BT_RED;
+        if( left )
+            bt_turn_right(info, node->parent->parent);
+        else
+            bt_turn_left(info, node->parent->parent);
+    }
 
 }/*}}}*/
 
 bt_node_t *bt_max(bt_info_t *info)/*{{{*/
 {
-	bt_node_t *current = info->root;
+    bt_node_t *current = info->root;
 
-	while( current->right != info->nul )
-	{
-		current = current->right;
-	}
-	return current;
+    while( current->right != info->nul )
+    {
+        current = current->right;
+    }
+    return current;
 }/*}}}*/
 
 bt_node_t *bt_min(bt_info_t *info)/*{{{*/
 {
-	bt_node_t *current = info->root;
+    bt_node_t *current = info->root;
 
-	while( current->left != info->nul )
-	{
-		current = current->left;
-	}
-	return current;
+    while( current->left != info->nul )
+    {
+        current = current->left;
+    }
+    return current;
 }/*}}}*/
