@@ -71,5 +71,8 @@ btree32 - key is int32 with internal cmp function
 
 Red/Black tree implemented
 
+7. Simple config file reader
+Look into test folder for use case example
+
 Copyright Max Amzarakov maxam18 _at_ gmail.com
 
