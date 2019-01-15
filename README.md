@@ -1,17 +1,18 @@
-#C My Library  - general purpose library collection
+# C My Library  - general purpose library collection
 
-Modules (libraries)
-1. List implementation
+## Modules (libraries)
+### List implementation
 exclusive and inclusive
 cml_list.h
 cml_list.c
 
 ilist use example
 
-Example:
+*Example:*
 you have a list of parameters
 and want to have a list of only strings
 
+```C
 typedef struct my_stru my_stru_t;
 struct my_stru
 {
@@ -20,9 +21,11 @@ struct my_stru
 
     cml_str_t      string;
 };
+```
 
 then you have list header somewhere
 
+```C
 int main(void)
 {
     cml_ilist_t  str_head;
@@ -46,8 +49,9 @@ int main(void)
 
     return 0;
 }
+```
 
-2. String and buffer 
+### String and buffer 
 cml_string.h
 cml_string.c
 
@@ -56,23 +60,38 @@ cml_str_t {data - char pointer, len - length }
 and enchancement of str_t
 cml_buf_t {buf - char pointer, pos - pointer to the current position, end - pointer to the buffer's end, size - allocated size}
 
-3. base64 (en/de)code
+### base64 (en/de)code
 
-4. cml_log
+### cml_log
 Logging functions
 
-5. cml_pool
+### cml_pool
 simple memory buffer management
 
-6. Various binary trees
+### Various binary trees
 btree - key and data are pointers
 btree16 - key is int16 with internal cmp function
 btree32 - key is int32 with internal cmp function
 
 Red/Black tree implemented
 
-7. Simple config file reader
+### Simple config file reader
 Look into test folder for use case example
 
-Copyright Max Amzarakov maxam18 _at_ gmail.com
+## How to use
 
+```
+> cd <your project dir>
+> <path_to_cml>/configure
+```
+This will make two files inside you project folder:
+- Makefile.cml
+- Makefile.cml.incl
+
+*Makefile.cml* - is the Makefile to build libcml.a
+`> make -f Makefile.cml`
+
+*Makefile.cml.incl* - CFLAGS and LDFLAGS definitions. Add this into your Makefile `include Makfile.cml.incl`
+
+Run `<path_to_cml>/configure --help` to read how to manage *libcml.a* container
+Run `<path_to_cml>/configure` and see notes it shows at the end.
