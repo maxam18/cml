@@ -39,6 +39,7 @@ struct cml_log_s
 
 #define cml_log_init(A, B, C)
 #define cml_log(L, F, args...) fprintf(stderr, F "\n", ##args)
+#define cml_log_reopen(A)
 
 #else
 /* some sophisticated stuff here. Like logging to the syslog */
