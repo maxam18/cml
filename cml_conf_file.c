@@ -19,7 +19,7 @@ cml_conf_params_t *get_entry(cml_conf_params_t *conf, const char *name, int len)
     {
         if( conf->plen != len )
             continue;
-            
+
         n  = len;
         pn = name;
         pl = conf->pname;
@@ -30,17 +30,17 @@ cml_conf_params_t *get_entry(cml_conf_params_t *conf, const char *name, int len)
         if( n == 0 )
             return conf;
     }
-    
+
     return NULL;
 }
 
 int cml_conf_file(const char *fname, cml_conf_params_t *params, void *conf)
 {
     FILE              *fp;
-    int                line_no;
-    char               buf[1024], *p, *ep, ch;
+    int                line_no, len;
+    char               buf[1024], *p, ch;
     cml_conf_params_t *param;
-    
+
     if( (fp = fopen(fname, "r")) == NULL )
     {
         fprintf( stderr, "Cannot open file %s.\n", fname);
@@ -52,36 +52,44 @@ int cml_conf_file(const char *fname, cml_conf_params_t *params, void *conf)
     {
         line_no++;
 
-        ep = buf + strlen(buf) - 1;
-        if( *ep != '\n' )
+        p = buf + strlen(buf) - 1;
+        if( *p-- != '\n' )
             fprintf( stderr, "Line %d too long.\n", line_no);
-        
-        *ep-- = 0;
-        
+
+        for( ch = *p; p > buf;)
+            if( ch == ' ' || ch == '"' || ch == '\'' || ch == ';' )
+                ch = *--p;
+            else
+                break;
+
+        *(p + 1) = 0;
+
         p     = buf;
         param = NULL;
         ch    = 1;
         while( (ch = *p++) != 0 )
             if( ch == ' ' )
             {
-                param = get_entry(params, buf, p - buf - 1);
+                len = p - buf - 1;
+                for(ch = *p; ch != 0;)
+                    if( ch == ' ' || ch == '"' || ch == '\'' )
+                        ch = *++p;
+                    else
+                        break;
+
+                param = get_entry(params, buf, len);
                 break;
             }
 
         if( param == NULL )
             continue;
 
-        for(; *ep == ' '; ep-- )
-            if( ep == p )
-                break;
-        *(ep+1) = 0;
-
         if( param->flags & CML_CONF_FLG_INT )
             *(int *)(conf + param->offset)   = strtol(p, NULL, 10);
         else
             *(char **)(conf + param->offset) = strdup(p);
     }
-    
+
     fclose(fp);
     return 0;
 }
