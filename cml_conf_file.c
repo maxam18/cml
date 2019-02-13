@@ -21,8 +21,13 @@ cml_conf_param_t *get_entry(cml_conf_param_t *conf, const char *name, int len)
         pl = conf->pname;
         n  = len;
         while( *pn++ == *pl++ )
-            if( --n == 0 )
-                return conf;
+            if( --n == 0  )
+            {
+                if( *pl == '\0' )
+                    return conf;
+                else
+                    break;
+            }
     }
 
     return NULL;

@@ -35,7 +35,7 @@ log_test: log_test.o
 	$(CC) -o $@ $< $(LDADD) 
 
 clean:
-	rm -f *.*~ *.o *.core core* $(PROGS)
+	rm -f *.*~ *.o *.core core* $(PROGS) a.out
 
 distclean: clean
 	rm -rf *.a Makefile.cml* log

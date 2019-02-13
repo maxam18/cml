@@ -11,6 +11,7 @@ struct my_data
 {
     char    *strval;
     int      intval;
+    int      intvalbig;
 };
 
 int main(int argc, char **argv)
@@ -24,10 +25,15 @@ int main(int argc, char **argv)
                 },
                 {     "int_parameter"
                     , offsetof(struct my_data, intval)
-                    , CML_CONF_FLG_INT
+                    , CML_CONF_FLG_INT | CML_CONF_FLG_MUST
                     , NULL
-                }
-                , { NULL, 0, 0, NULL }
+                },
+                {     "int_parameter_"
+                    , offsetof(struct my_data, intvalbig)
+                    , CML_CONF_FLG_INT | CML_CONF_FLG_MUST
+                    , NULL
+                },
+                { NULL, 0, 0, NULL }
             };
 
     conf.strval = argv[0];
@@ -37,10 +43,12 @@ int main(int argc, char **argv)
                       , conf_params, &conf) )
         return -1;
 
-    fprintf( stdout, "String param value: %s\n"
-                     "Numeric param value: %d\n"
+    fprintf( stdout, "String param 'string_parameter' value: %s\n"
+                     "Numeric param 'int_parameter' value: %d\n"
+                     "Numeric param 'int_parameter_big' value: %d\n"
                     , conf.strval
-                    , conf.intval );
+                    , conf.intval
+                    , conf.intvalbig );
 
     return 0;
 }
