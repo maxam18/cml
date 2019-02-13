@@ -10,36 +10,44 @@
 #include <stdlib.h>
 #include <string.h>
 
-cml_conf_params_t *get_entry(cml_conf_params_t *conf, const char *name, int len)
+cml_conf_param_t *get_entry(cml_conf_param_t *conf, const char *name, int len)
 {
     int          n;
     const char  *pl, *pn;
 
     for(; conf->pname; conf++)
     {
-        if( conf->plen != len )
-            continue;
-
-        n  = len;
         pn = name;
         pl = conf->pname;
-        for(; n; n-- )
-            if( *pn++ != *pl++ )
-                break;
-
-        if( n == 0 )
-            return conf;
+        n  = len;
+        while( *pn++ == *pl++ )
+            if( --n == 0 )
+                return conf;
     }
 
     return NULL;
 }
 
-int cml_conf_file(const char *fname, cml_conf_params_t *params, void *conf)
+static int check_set(cml_conf_param_t *param)
+{
+    int retval = 0;
+    for(; param->pname; ++param)
+        if( (param->flags & (CML_CONF_FLG_MUST | CML_CONF_FLG_SET))
+            == CML_CONF_FLG_MUST )
+        {
+            fprintf( stderr, "Param '%s' not found.\n", param->pname);
+            retval++;
+        }
+
+    return retval;
+}
+
+int cml_conf_file(const char *fname, cml_conf_param_t *params, void *conf)
 {
     FILE              *fp;
     int                line_no, len;
     char               buf[1024], *p, ch;
-    cml_conf_params_t *param;
+    cml_conf_param_t  *param;
 
     if( (fp = fopen(fname, "r")) == NULL )
     {
@@ -84,6 +92,11 @@ int cml_conf_file(const char *fname, cml_conf_params_t *params, void *conf)
         if( param == NULL )
             continue;
 
+        if( param->flags & CML_CONF_FLG_SET )
+            fprintf( stderr, "Param '%s' is duplicate at line %d.\n"
+                           , param->pname, line_no);
+        param->flags |= CML_CONF_FLG_SET;
+
         if( param->flags & CML_CONF_FLG_INT )
             *(int *)(conf + param->offset)   = strtol(p, NULL, 10);
         else
@@ -91,6 +104,14 @@ int cml_conf_file(const char *fname, cml_conf_params_t *params, void *conf)
     }
 
     fclose(fp);
-    return 0;
+    return check_set(params);
+}
+
+void cml_conf_file_free(cml_conf_param_t *param, void *conf)
+{
+    for( ; param->pname; ++param )
+        if( (param->flags & (CML_CONF_FLG_SET | CML_CONF_FLG_INT))
+             == CML_CONF_FLG_SET )
+            free(conf + param->offset);
 }
 

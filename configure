@@ -43,27 +43,27 @@ usage()
     echo "                           Default: $BUILDDIR"
 	echo "   --debug=yes           - enable debug"
 	echo "   --test=yes            - enable test"
-	echo "   --disable-base64       - base64 functions"
-	echo "   --disable-string       - string functions"
-	echo "   --disable-list         - list functions"
-	echo "   --disable-log          - log functions"
-	echo "   --disable-btree        - btree functions"
-	echo "   --disable-btree16      - btree16 functions"
-	echo "   --disable-btree32      - btree32 functions"
-	echo "   --disable-mpool        - memory pool functions"
-	echo "   --disable-conf         - conf file functions"
+	echo "   --enable-base64       - base64 functions"
+	echo "   --enable-string       - string functions"
+	echo "   --enable-list         - list functions"
+	echo "   --enable-log          - log functions"
+	echo "   --enable-btree        - btree functions"
+	echo "   --enable-btree16      - btree16 functions"
+	echo "   --enable-btree32      - btree32 functions"
+	echo "   --enable-mpool        - memory pool functions"
+	echo "   --enable-conf         - conf file functions"
 }
 
 DEBUG=
-BASE64=yes
-STRING=yes
-LIST=yes
-LOG=yes
-MPOOL=yes
-BTREE=yes
-BTREE16=yes
-BTREE32=yes
-CONF=yes
+BASE64=no
+STRING=no
+LIST=no
+LOG=no
+MPOOL=no
+BTREE=no
+BTREE16=no
+BTREE32=no
+CONF=no
 
 while [ "x$CMD_VAR" != "x" ]; 
 do
@@ -132,7 +132,7 @@ echo "Debug:             $DEBUG"
 echo "Base64 lib:        $BASE64"
 echo "String lib:        $STRING"
 echo "List lib:          $LIST"
-echo "Log lib:           $LIST"
+echo "Log lib:           $LOG"
 echo "Mem pool lib:      $MPOOL"
 echo "Btree lib:         $BTREE"
 echo "Btree16 lib:       $BTREE16"

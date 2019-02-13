@@ -2,7 +2,7 @@ CC = gcc
 cc = cc
 LA = ar
 MAKE = make
-PROGS = conf_test
+PROGS = log_test conf_test
 
 include Makefile.cml.incl
 
@@ -15,6 +15,8 @@ CFLAGS = -O0 -Wall $(INCPATH) -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARG
 
 .SUFFIXES: .c .cpp .o
 
+%.h:
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
@@ -24,14 +26,17 @@ conf_test: conf_test.o
 	$(CC) -o $@ $< $(LDADD)
 
 base64_test: base64_test.o
-	$(CC) $(LDADD) -o $@ $<
+	$(CC) -o $@ $< $(LDADD) 
 
 list_test: list_test.o
-	$(CC) $(LDADD) -o $@ $<
+	$(CC) -o $@ $< $(LDADD) 
+
+log_test: log_test.o
+	$(CC) -o $@ $< $(LDADD) 
 
 clean:
 	rm -f *.*~ *.o *.core core* $(PROGS)
 
 distclean: clean
-	rm -rf *.a Makefile.cml*
+	rm -rf *.a Makefile.cml* log
 

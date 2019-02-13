@@ -27,32 +27,46 @@ void cml_log_init(unsigned char flags, const char *filename, const char *prognam
 {
     bzero(&_cml_log_info, sizeof(_cml_log_info));
 
-    _cml_log_info.fd = -1;
+    _cml_log_info.fd    = -1;
+    _cml_log_info.flags = flags;
 
     cml_log_reopen(filename);
-
 
     if( progname )
         _cml_log_info.progname = progname;
     else
         _cml_log_info.progname = strdup("cml_log");
 
-    _cml_log_info.flags = flags;
-
 }
 
 void cml_log_reopen(const char *filename)
 {
+    int fd;
+
     if( filename )
     {
+        fd = open( filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+
         if( _cml_log_info.fd >= 0 )
+        {
             close(_cml_log_info.fd);
-            
-        _cml_log_info.fd = open( filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-        
+            dup2(fd, _cml_log_info.fd );
+            close(fd);
+        } else
+            _cml_log_info.fd = fd;
+
         if( _cml_log_info.fd >= 0 )
+        {
+            if( _cml_log_info.flags & CML_LOG_FLAG_DUP )
+            {
+                close( fileno(stdout) );
+                close( fileno(stderr) );
+                dup2( _cml_log_info.fd, fileno(stdout) );
+                dup2( _cml_log_info.fd, fileno(stderr) );
+            }
             return;
-        
+        }
+                
         fprintf( stderr, "Cannot open logfile: %s Using stderr instead\n"
                     , strerror(errno));
     }

@@ -16,34 +16,32 @@ struct my_data
 int main(int argc, char **argv)
 {
     struct my_data    conf;
-    cml_conf_params_t conf_params[] = {
+    cml_conf_param_t  conf_params[] = {
                 {     "string_parameter"
-                    , sizeof("string_parameter") - 1
                     , offsetof(struct my_data, strval)
                     , 0
                     , NULL
                 },
                 {     "int_parameter"
-                    , sizeof("int_parameter") - 1
                     , offsetof(struct my_data, intval)
                     , CML_CONF_FLG_INT
                     , NULL
                 }
-                , { NULL, 0, 0, 0, NULL }
+                , { NULL, 0, 0, NULL }
             };
-    
+
     conf.strval = argv[0];
     conf.intval = 9999;
-    
-    if( cml_conf_file((argc > 1 ? argv[1] : "cml_conf_file.conf")
+
+    if( cml_conf_file((argc > 1 ? argv[1] : "/mnt/hdd/max/Work/Devel/cml/tests/test.conf")
                       , conf_params, &conf) )
         return -1;
-    
+
     fprintf( stdout, "String param value: %s\n"
                      "Numeric param value: %d\n"
                     , conf.strval
                     , conf.intval );
-    
+
     return 0;
 }
 
