@@ -4,7 +4,6 @@
  * Author: Max Amzarakov (maxam18 _at_ gmail _._ com)
  * Copyright (c) 2018 ..."
  */
-
 #include <cml.h>
 #include <cml_log.h>
 #include <stdio.h>
@@ -16,12 +15,14 @@
 #include <stdarg.h>
 #include <errno.h>
 
-cml_log_t   _cml_log_info;
-
 const char *_cml_log_priostr[] = 
 { "NONE", "ERROR", "CRITICAL", "WARNING", "EMERG", "NOTICE", "INFO", "DEBUG"};
 
+cml_log_t   _cml_log_info = { CML_LOG_STDERR_FD, 0, sizeof(_cml_log_priostr)-1, 0, { '\0' } };
+
+
 #ifdef CML_LOG_LOG
+static void cml_log_reopen(const char *filename);
 
 void cml_log_init(unsigned char flags, const char *filename, const char *progname)
 {
@@ -33,13 +34,17 @@ void cml_log_init(unsigned char flags, const char *filename, const char *prognam
     cml_log_reopen(filename);
 
     if( progname )
-        _cml_log_info.progname = progname;
-    else
-        _cml_log_info.progname = strdup("cml_log");
+        _cml_log_info.name_len = snprintf(_cml_log_info.name,  sizeof(_cml_log_info.name)
+                    , "%s[%d]: ", progname, getpid());
 
 }
 
-void cml_log_reopen(const char *filename)
+void cml_log_set_level(unsigned char level)
+{
+    _cml_log_info.level = level;
+}
+
+static void cml_log_reopen(const char *filename)
 {
     int fd;
 
@@ -81,28 +86,35 @@ void cml_log(unsigned char prio, char *format, ... )
     va_list           args;
     char             *p;
     size_t            n, len;
+    char              buf[2048];
 
-    p   = _cml_log_info.buf;
-    len = sizeof(_cml_log_info.buf) - 2;
+    if( prio > _cml_log_info.level )
+        return;
+
+    p   = buf;
+    len = sizeof(buf) - 2;
 
     if( _cml_log_info.flags & CML_LOG_FLAG_TIME )
     {
         clock_gettime(CML_LOG_CLOCK_SRC, &tsc);
 
-	tp = localtime(&tsc.tv_sec);
-        n  = strftime(p, len, "%Y/%m/%d %H:%M:%S ", tp);
+        tp = localtime(&tsc.tv_sec);
+        n  = sprintf(p, "%4d/%02d/%02d %02d:%02d:%02d "
+                            , tp->tm_year + 1900, tp->tm_mon + 1, tp->tm_mday 
+                            , tp->tm_hour, tp->tm_min, tp->tm_sec );
     
         p   += n;
         len -= n;
     }
 
-    n = snprintf( p, len, "%s[%d]: ", _cml_log_info.progname, getpid());
+    if( _cml_log_info.name_len )
+    {
+        memcpy(p, _cml_log_info.name, _cml_log_info.name_len);
+        p += _cml_log_info.name_len;
+        n -= _cml_log_info.name_len;
+    }
 
-    p   += n;
-    len -= n;
-
-    if( _cml_log_info.flags & CML_LOG_FLAG_PRIO 
-            && prio < sizeof(_cml_log_priostr) )
+    if( _cml_log_info.flags & CML_LOG_FLAG_PRIO )
     {
         n = snprintf( p, len, "%s ", _cml_log_priostr[prio]);
         
@@ -120,7 +132,7 @@ void cml_log(unsigned char prio, char *format, ... )
     *p++  = '\n';
     *p    = '\0';
 
-    write( _cml_log_info.fd, _cml_log_info.buf, p - _cml_log_info.buf);
+    write( _cml_log_info.fd, buf, p - buf);
 }
 
 #endif
