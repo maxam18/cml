@@ -25,7 +25,6 @@ int main(int argc, char **argv)
 
     cml_log(CML_LOG_NOTICE, "test notification");
     cml_log(CML_LOG_NOTICE, "test reopen");
-    cml_log_reopen(filename);
     cml_log(CML_LOG_INFO, "Log reopened");
     cml_log_close();
 
@@ -61,7 +60,7 @@ int main(int argc, char **argv)
     fprintf( stderr, "Print line to stderr before reopen.\n");
     fprintf( stdout, "Print line to stdout before reopen.\n");
     rename(filename, newfname);
-    cml_log_reopen(filename);
+
     cml_log(CML_LOG_INFO, "Log reopened");
     fprintf( stderr, "Print line to stderr after reopen.\n");
     fprintf( stdout, "Print line to stdout after reopen.\n");
