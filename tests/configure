@@ -3,4 +3,4 @@
 CMLDIR=`pwd`
 CMLDIR="`expr "$CMLDIR" : '\(.*\)test'`"
 
-${CMLDIR}/configure --enable-list --enable-log --debug=yes
+${CMLDIR}/configure --enable-string --enable-list --enable-log --debug=yes

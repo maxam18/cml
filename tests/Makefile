@@ -22,6 +22,9 @@ CFLAGS = -O0 -Wall $(INCPATH) -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARG
 
 all: $(PROGS)
 
+string_test: string_test.o
+	$(CC) -o $@ $< $(LDADD)
+
 conf_test: conf_test.o
 	$(CC) -o $@ $< $(LDADD)
 
