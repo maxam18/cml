@@ -188,20 +188,19 @@ u_char *cml_ito26(u_char *buf, uint32_t val)
     return buf ? buf : ibuf;
 }
 
-int32_t cml_26toi(u_char *str, size_t len)/*{{{*/
+uint32_t cml_26toi(u_char *str, size_t len)/*{{{*/
 {
     unsigned char c;
-    int32_t val;
-    
-    if( 0 == len )
-        return 0;
+    uint32_t val = 0;
 
-    for( val = 0; len--; str++ )
+    while( len-- )
     {
-        c = *str;
-        if( c <= 'A' || c >= 'Z' )
-            return 0;
-        val = val * 26 + (c - 'A');
+        c = (unsigned char)*str++ | 0x20;
+
+        if( c < 'a' || c > 'z' )
+            return INT32_MIN;
+
+        val = val*26 + (c - 'a');
     }
 
     return val;

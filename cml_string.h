@@ -45,7 +45,7 @@ extern const char cml_ch_tolower[];
 void cml_str_tolower(cml_str_t *str);
 void cml_urldecode(cml_str_t *str);
 int cml_atoi(const char *ptr, const char *eptr);
-int32_t cml_26toi(u_char *str, size_t len);
+uint32_t cml_26toi(u_char *str, size_t len);
 u_char *cml_ito26(u_char *buf, uint32_t val);
 uint32_t cml_htoi(u_char *str, size_t len);
 uint64_t cml_htoll(u_char *str, size_t len);
